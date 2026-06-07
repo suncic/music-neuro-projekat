@@ -1,0 +1,12 @@
+# Virtuelno okruzenje
+music_neuro_projekat/
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
