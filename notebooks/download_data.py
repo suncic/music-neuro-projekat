@@ -3,12 +3,13 @@ from music21 import corpus
 import os
 
 def download_composer(composer_name, folder, limit=20):
+    os.makedirs(folder, exist_ok=True)
     print(f"Downloading {composer_name} compositions...")
 
     pieces = corpus.getComposer(composer_name)
     print(f"Found {len(pieces)} compositions")
 
-    for i, path in enumerate(pieces[:20]):
+    for i, path in enumerate(pieces[:limit]):
         try:
             file_name = f"{composer_name}_{i+1}.mid"
             full_path = os.path.join(folder, file_name)

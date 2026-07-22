@@ -1,0 +1,223 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2639
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Bold;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww24920\viewh12940\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs24 \cf0 \expnd0\expndtw0\kerning0
+1. \'8ata je neuronska mre\'9ea (osnove)\
+\
+
+\f1\b0 NEURON - prima nekoliko brojeva na ulzau, svaki broj mnozi sa svojom 
+\f0\b tezinom, 
+\f1\b0 sve to sabere i na kraju propusti kroz 
+\f0\b aktivacionu funkciju
+\f1\b0  koja odlucuje konacan izlaz\
+	ulaz: x, y, z\
+	tezine: w1, w2, w3\
+\
+	korak 1: z = (w1 * x) + (w2 * y) + (w3 + z) + bias\
+	korak 2: izlaz = aktivaciona_funkcija(z)\
+\
+
+\f0\b bias
+\f1\b0  je dodatni broj koji se sabira - daje neuronu malo slobode, da pomeri rezultat gore ili dole nezavisno od ulaza\
+\
+- tezine su brojevi koje mreza uci. Na pocetku su nasumicne (mreza ne zna nista)\
+- kroz trening mreza postepeno podesava te brojeve dok ne pocne da daje tacne odgovore\
+\
+
+\f0\b SLOJEVI\
+
+\f1\b0 - Jedan neuron je preslab da nauci nesto korisno, zato se neuroni organizuju u slojeve koji se redjaju jedan za drugim\
+	ULAZNI SLOJ -> SKRIVENI SLOJEVI -> IZLAZNI SLOJ\
+- Ulazni sloj: prima sirove podatke\
+- Skriveni slojevi: ovde se desava ucenje obrazca, svaki sloj otkriva sve apstraktnije karakteristike\
+- Izlazni sloj: daje konacan odgovor (verovatnoce za svaku notu)\
+- svaki neuron u jednom sloju je povezan sa svim neuronima u sledecem sloju - 
+\f0\b fully connected
+\f1\b0  ili 
+\f0\b Dense sloj
+\f1\b0 \
+\
+
+\f0\b UCENJE MREZE
+\f1\b0 \
+KORAK 1 (forward pass, prolaz unapred)\
+	- mreza uzme ulaz, propusti ga kroz sve slojeve i daje predikciju\
+KORAK 2 (racunanje greske)\
+	- uporedjujemo predikciju sa stvarnim dogovorom (kojeg znamo iz trening podataka)\
+	- ova greska se zove loss\
+KORAK 3 (backward pass, propagacija greske unazad)\
+	- mreza ide unazad kroz slojeve i za svaku tezinu racuna: da sam malo promenio ovu tezinu koliko bi se greska smanjila?\
+	- meri se preko gradijenta (izvoda)\
+KORAK 4 (arzuriranje tezina)\
+	- svaka tezina se malo pomeri u smeru koji smanjuje gresku\
+	- koliko se pomera odredjuje 
+\f0\b learning rate
+\f1\b0 \
+KORAK 5 (ponavljanje)\
+	- ovaj ceo proces koraci 1-4, se ponavlja hiljade puta, za hiljade primera\
+	- mreza postepeno postaje bolja - greska (loss) opada, tacnost (accuracy) raste\
+\
+
+\f0\b veza sa projektom
+\f1\b0 \
+- jedan prolaz kroz 1-4 se desi za svaki 
+\f0\b batch
+\f1\b0  (grupu primera, u ovom slucaju jedan klizajuci prozor, moze se napraviti da se radi za vise prozora od jednom)\
+- kada mreza prodje kroz sve batch-ove jednom to je jedna 
+\f0\b epoha
+\f1\b0 \
+\
+
+\f0\b 2. Za\'9ato LSTM za muziku (problem sekvenci)\
+
+\f1\b0 \
+
+\f0\b problem obicnik (Dense) mreza sa sekvencama
+\f1\b0 \
+- obicna mreza sa dense slojevima tretira svaki ulaz nezavisno\
+- ako se daju 4 broja [3, 7, 1, 5], ona vidi 4 odvojena broja - ne razume da je 3 doslo pre 7 i da taj redosled nosi informaciju\
+- u muzici je redosled jako bitan\
+\
+
+\f0\b rekurentne mreze (RNN) - prva ideja
+\f1\b0 \
+- RNN resava ovo tako sto ima memoriju\
+- kada obradjuje notu broj 5 u sekvenci, \'93pamti\'94 nesto o notama 1-4 koje su dosle pre\
+- svaki korak prosledjuje memoriju sledecm koraku, kao da mreza cita recenicu rec po rec i pamti kontekst\
+\
+
+\f0\b problem RNN - kratko pamcenje
+\f1\b0 \
+- RNN ima ozbiljan problem koji se zove vanishing gradient\
+- kao igra gluvih telefona\
+- sto je sekvenca duza, informacija sa pocetka postaje sve slabija do kraja sekvence\
+- RNN pramti samo zadnjih nekoliko koraka, a pre toga sve zaboravi\
+- za muziku je ovo problem, jer melodija cesto zavisi od tonaliteta uspostavljenog na pocetku kompozicije, harmonskih obrazaca koji se protezu kroz mnogo taktova,\'85\
+\
+
+\f0\b lstm - resenje sa kapijama\
+
+\f1\b0 - LSTM (long short-term memory) je dizajniran specijalno da resi problem kratkog pamcenja\
+- glavna ideja: LSTM ima posebnu memorisku traku (
+\f0\b cell state - celija
+\f1\b0 ) koja ide kroz celu sekvencu i tri kapije koje kontrolisu sta se desava sa tom memorijom\
+FORGET GATE - sta da zaboravim? ovaj detalj o prethodnom taktu nije vise bitan, brisem ga iz memorije\
+INPUT GATE - sta novo da zapamtim? ovo je novi vazan podatak - da je pesma u g duru - zapisujem ga u memoriju\
+OUTPUT GATE - sta da prosledim dalje? na osnovu svega sto imam u memoriji, evo sta trenutno treba da znam da donesem odluku\
+- cell state je sama memorija, prenosi se kroz ceo proces i kapije odlucuju sta se u njih upisuje brise i cita u datom trenutku\
+\
+
+\f0\b veza sa projektom
+\f1\b0 \
+model..add(LSTM(128))\
+- broj 128 je dimenzija cell state-a - koliko brojeva mreza koristi da predstavi svoje trenutno znanje o sekvenci u datom trenutku\
+- veci broj = veci kapacitet pamcenja, ali sporiji trenint i veci rizik od overfitinga\
+- LSTM sloj prima 16 vektora (jedan za svaku notu u prozoru, svaki vektor je duzine 64 - izlaz iz Embedding sloja) i kroz njih prolazi korak po korak arzurirajuci svoju memoriju\
+- na kraju, posle 16-og koraka, izbacuje se jedan vektor od 128 brojeva koji predstavlja sazetak cele sekvence - to ide dalje u Dense sloj\
+\
+
+\f0\b 3. Arhitektura tvoje mre\'9ee \'97 sloj po sloj\
+
+\f1\b0 \
+
+\f0\b sloj 1 - Embedding
+\f1\b0 \
+model.add(Embdding(input_dim=46, output_dim=64))\
+- broj 5 (nota C4) i broj 6 (nota C#4) su u recniku blizu,ali to je samo slucajnost kako smo numerisali note\
+- broj 20 (G4) matematicki je daleko od broja 5, ali harmonski su C4 i G4 veoma bliske note (kvinte)\
+- dakle celobrojni ID-jevi ne nose muzicku informaciju, samo su labele\
+- embedding ovde svaki id pretvara u vektor od 64 broja koji mreza sama uci tokom treninga\
+- na pocetku su ti vektori nasumicni, kroz trening reza ih postepeno podesava tako da note koje se javljaju u slicnim kontekstima dobiju slicne vektore\
+	npr. vektor za G4 i C4 bi trebalo biti veoma slicni\
+- za svaku notu u ulazi dobijao 16 vektora od 64 broja - matrica 16x64\
+\
+
+\f0\b sloj 2 - LSTM(128)
+\f1\b0 \
+model.add(LSTM(128))\
+- LSTM dobija matricu 16x64 i obradjuje je korak po korak \
+	korak 1: prima vektor note C4 od 64 broja -> arzurira cell state -> daje medjuizlaz\
+	korak 2: prima vektor note E4 od 64 broja -> arzurira cell state (pamti C4) -> daje medjuizlaz\
+	korak 3: prima vektor note E4 od 64 broja -> arzurira cell state (pamti C4, E4) -> daje medjuizlaz \'85.\
+- na svakom koraku cell state se arzurira kroz tri kapije, pamti relevantne informacije i zaboravlja irelevantne\
+- iz LSTM sloja izlazi vektor od 128 brojeva koji predstavlja sazetak cele sekvence od 16 nota\
+\
+
+\f0\b sloj 3 - Dense + Softmax
+\f1\b0 \
+model.add(Dense(vocab_size, activation=\'91softmax\'92))\
+- dense sloj prima vektor od 128 brojeva i pretvara ga u 46 brojeva - jedan za svaku mogucu notu u recniku\
+- svaki od tih 46 neurona je \'93glasac\'94 za jednu notu - koliki je skor da je bas ta nota sledeca\
+- sirovi skorovi nisu verovatnoce - mogu biti negativni, mogu biti jako veliki\
+- softmax ih pretvara u verovatnoce koje se sabiraju tacno na 1\
+- nota sa najvecom verovatnocom je predikcija mreze\
+\
+
+\f0\b 4. Kako mre\'9ea u\uc0\u269 i \'97 trening proces\
+
+\f1\b0 \
+
+\f0\b loss funkcija - kako se meri greska
+\f1\b0 \
+- loss funkcija je matematicki naci da izmerimo koliko je mreza pogresila na jednom primeru ili grupi primera\
+model.compile(loss=\'92sparse_categorical_crossentropy\'92, \'85.)\
+- posto je ovo problem klasifikacije - mreza bira zimedju 46 kategorija (nota) zato je categorical\
+- sparse znaci da tacan odgovor cuvamo kao jedan broj, ne kao celi vektor, sto je efikacnije za memoriju\
+- crossentropy loss kaznjava mrezu kada je sigurna ali pogresna\
+- loss je velik kada je mreza nesigurna u tacan odgovor ili sigurna u pogresan odgovor, cilj je da loss bude sto manji\
+	loss = -log(verovatnoca tacnog odgovora) - sto je manja verovatnoca sto je veca vrednost loss funkcije\
+\
+
+\f0\b optimizer - kako se ispravlja greska
+\f1\b0 \
+- optimizer je algoritam koji koristi loss da podesi tezine mreze\
+- osnovna ideja - gradijentni spust\
+- osnovna formula za arzuranje tezine: nova_tezina = stara_tezina - learning_rate x gradijent\
+SGD - ucek isti korak u smeru gradijeknta, ide se ucek istom brzinom bez obzira na teren\
+RMSprop - adaptivni koraci, manji korak za parametre koji se cesto menjaju, usporava se na strmim delovima\
+Adam - kombinuje momentum (pamti prethodne korake) + adaptivni koraci\
+\
+
+\f0\b learning rate - EKSPERIMENT
+\f1\b0 \
+Adam(learning_rate=0.001)\
+- learning rate je velicina koraka koji optimizer pravi pri svakom arzuriranju tezina\
+\
+
+\f0\b overfiting - problem vise epoha
+\f1\b0 \
+- kada val loss pocne da raste dok train loss nastavlja da pada - mreza memorise trening podatke umesto da uci opste obrazce\
+- prestaje da generalizuje nove primere\
+- zato postoji validation split u treningu (model.fit)\
+- 10% trening podataka se korist za validaciju - mreza ih ne uci samo se proverava na njima posle dvake epohe\
+\
+
+\f0\b batch size - EKSPERIMENT
+\f1\b0 \
+- koliko primera mreza obradi pre jednog arzuriranja tezina\
+	batch_size = 32 -> 5030 / 32 = 157 arzuriranja po emohi\
+\
+
+\f0\b 5. Evaluacija\
+\
+podela na tri seta - trening, evaluacioni i test set\
+\
+metrike:\
+
+\f1\b0 accuracy = broj tacnih predikcija / ukupan broj predikcija\
+loss = prosecna vrednost cross entropy funkcije na test setu, sto je manji to je bolje\
+\
+
+\f0\b matrica konfuzije:\
+
+\f1\b0 - accuracy nam govori koliko mreza gresi ali ne i gde gresi, koristimo onda matricu konfuzije\
+- tabela gde redovi predstavljaju stvarne note, a kolone predvidjene note\
+- [i][j] - govori koliko puta je nota i bila predvidjena kao nota j\
+- glavna dijagonala - tacne predikcije\
+- van dijagonale su greske\
+}

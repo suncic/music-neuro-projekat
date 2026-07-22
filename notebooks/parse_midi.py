@@ -1,8 +1,8 @@
 import os
 import json
-from music21 import converter, instrument, note, chord
+from music21 import converter, note, chord
 
-def parse_midi_folder(file_path):
+def parse_midi_file(file_path):
     notes = []
 
     try:
@@ -20,11 +20,11 @@ def parse_midi_folder(file_path):
     return notes
 
 def parse_composer(midi_folder, parsed_folder, composer_name):
-    print(f"Parsing {composer_name} MIDI files...")
-    notes = []
-
-    files = [f for f in os.listdir(midi_folder) if f.endswith('.mid')]
+    print(f"Parsing {composer_name} MIDI files")
+    files = sorted(f for f in os.listdir(midi_folder) if f.endswith('.mid'))
     print(f"Found {len(files)} files")
+
+    os.makedirs(parsed_folder, exist_ok=True)
 
     for file_name in files:
         midi_path = os.path.join(midi_folder, file_name)
@@ -35,7 +35,7 @@ def parse_composer(midi_folder, parsed_folder, composer_name):
             print(f"Skipped (already exists): {json_name}")
             continue
 
-        notes = parse_midi_folder(midi_path)
+        notes = parse_midi_file(midi_path)
 
         if len(notes) == 0:
             print(f"Skipped (no notes): {file_name}")
