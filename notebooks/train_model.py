@@ -81,20 +81,14 @@ def train_and_evaluate(composer_folder, model_save_path,lstm_units=128,
     return training_results, test_loss, test_accuracy
 
 if __name__ == "__main__":
-    # Bach
-    train_and_evaluate(
-        composer_folder='../data/prepared/bach',
-        model_save_path='../models/bach_model.keras'
-    )
 
-    # Mozart
-    train_and_evaluate(
-        composer_folder='../data/prepared/mozart',
-        model_save_path='../models/mozart_model.keras'
-    )
+    sequences_length = [4, 8, 16, 32]
+    composers = ["bach", "mozart", "beethoven"]
 
-    # Beethoven
-    train_and_evaluate(
-        composer_folder='../data/prepared/beethoven',
-        model_save_path='../models/beethoven_model.keras'
-    )
+    for composer in composers:
+        for sequence_length in sequences_length:
+
+            train_and_evaluate(
+                composer_folder=f"../data/prepared/{composer}/seq_{sequence_length}",
+                model_save_path=f"../models/{composer}_seq_{sequence_length}.keras"
+            )

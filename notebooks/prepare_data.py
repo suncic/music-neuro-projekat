@@ -90,11 +90,16 @@ def prepare_composer(parsed_folder, output_folder, sequence_length=16):
     print(f"Test sequences: {len(X_test)}")
 
 
-print("===== Bach =====")
-prepare_composer('../data/parsed/bach', '../data/prepared/bach')
+sequences_length = [4, 8, 16, 32]
+composers = ["bach", "mozart", "beethoven"]
 
-print("===== Mozart =====")
-prepare_composer('../data/parsed/mozart', '../data/prepared/mozart')
+for composer in composers:
+    print(f"===== {composer.capitalize()} =====")
 
-print("===== Beethoven =====")
-prepare_composer('../data/parsed/beethoven', '../data/prepared/beethoven')
+    for sequence_lenght in sequences_length:
+        print(f"Sequence lenght: {sequence_lenght}")
+        prepare_composer(
+            parsed_folder=f"../data/parsed/{composer}", 
+            output_folder=f"../data/prepared/{composer}/seq_{sequence_lenght}", 
+            sequence_length=sequence_lenght
+        )
