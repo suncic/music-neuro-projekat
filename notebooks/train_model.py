@@ -3,7 +3,7 @@ import json
 import numpy as np
 
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Embedding
+from keras.layers import LSTM, GRU, Dense, Embedding
 from keras.optimizers import Adam, SGD, RMSprop
 
 def load_prepared_data(folder):
@@ -22,10 +22,22 @@ def load_prepared_data(folder):
     return X_train, y_train, X_validation, y_validation, X_test, y_test, vocab
     
 
-def build_model(vocab_size, lstm_units=128, optimizer='adam', learning_rate=0.001):
+def build_model(vocab_size, embedding_dim=64, recurrent_type="lstm", lstm_units=128, optimizer='adam', second_layer_units=None, learning_rate=0.001):
     model = Sequential()
-    model.add(Embedding(input_dim=vocab_size, output_dim=64))
-    model.add(LSTM(lstm_units))
+    model.add(Embedding(input_dim=vocab_size, output_dim=embedding_dim))
+
+    if recurrent_type == "lstm":
+        if second_layer_units is None:
+            model.add(LSTM(lstm_units))
+        else:
+            model.add(LSTM(lstm_units, return_sequences=True))
+            model.add(LSTM(second_layer_units))
+    elif recurrent_type == "gru":
+        model.add(GRU(lstm_units))
+    else:
+        raise ValueError(f"Unknown recurrent type: {recurrent_type}")
+
+    
     model.add(Dense(vocab_size, activation='softmax'))
 
     if optimizer == 'adam':
