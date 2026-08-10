@@ -17,7 +17,6 @@ if __name__ == "__main__":
             epochs=100,
             patience=10,
             use_early_stopping=True,
-            evaluate_test=True,
             seed=42
         )
     

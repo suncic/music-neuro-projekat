@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+import tensorflow as tf
 
 from keras.models import Sequential
 from keras.layers import LSTM, GRU, Dense, Embedding
@@ -49,7 +50,8 @@ def build_model(vocab_size, embedding_dim=64, recurrent_type="lstm", lstm_units=
     else:
         opt = optimizer
 
-    model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+    model.compile(loss='sparse_categorical_crossentropy', optimizer=opt, 
+                  metrics=['accuracy', tf.keras.metrics.SparseTopKCategoricalAccuracy(k=3, name="top3_accuracy")])
     return model
 
 
@@ -71,15 +73,16 @@ def train_and_evaluate(composer_folder, model_save_path,lstm_units=128,
     print(f"Total test sequences: {X_test.shape[0]}")
 
     print(f"\nBuilding model (lstm_units={lstm_units}, optimizer={optimizer}, lr={learning_rate})")
-    model = build_model(vocab_size, lstm_units, optimizer, learning_rate)
+    model = build_model(vocab_size=vocab_size, lstm_units=lstm_units, optimizer=optimizer, learning_rate=learning_rate)
 
     print(f"\nTraining model ({epochs} epochs, batch_size={batch_size})")
     training_results = model.fit(X_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(X_validation, y_validation))
 
     print("\nEvaluating model on test set")
-    test_loss, test_accuracy = model.evaluate(X_test, y_test)
+    test_loss, test_accuracy, test_top3_accuracy = model.evaluate(X_test, y_test)
     print(f"Test loss: {test_loss:.4f}")
     print(f"Test accuracy: {test_accuracy:.4f}")
+    print(f"Test top3 accuracy: {test_top3_accuracy:.4f}")
 
     if model_save_path:
         model_folder = os.path.dirname(model_save_path)
