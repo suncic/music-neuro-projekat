@@ -27,11 +27,9 @@ def split_compositions(pieces, test_size=0.1, validation_size=0.1, random_state=
     train_val_pieces, test_pieces = train_test_split(pieces, test_size=test_size, random_state=random_state)
     validation_ratio = validation_size / (1 - test_size)
     train_pieces, validation_pieces = train_test_split(train_val_pieces, test_size=validation_ratio, random_state=random_state)
-
     return train_pieces, validation_pieces, test_pieces
 
 def create_vocabularies(pieces):
-
     unique_events_values = { property_name: set() for property_name in MUSIC_EVENT_PROPERTIES}
 
     for composition in pieces:
@@ -43,7 +41,6 @@ def create_vocabularies(pieces):
 
     for property_name in MUSIC_EVENT_PROPERTIES:
         sorted_values = sorted(unique_events_values[property_name])
-
         vocabularies[property_name] = {value: number for number, value in enumerate(sorted_values)}
 
     return vocabularies
@@ -59,13 +56,11 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
         for position in range(len(composition) - sequence_length):
             input_events = composition[position: position + sequence_length]
             next_event = composition[position + sequence_length]
-
             sequence_is_valid = True
             encoded_input_sequence = {}
 
             for property_name in MUSIC_EVENT_PROPERTIES:
                 property_vocabulary = vocabularies[property_name]
-
                 input_values = [str(music_event[property_name] for music_event in input_events)]
                 output_value = str(next_event[property_name])
 
@@ -82,7 +77,6 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
             if not sequence_is_valid:
                 continue
 
-            # ovde se dodaje u sekvencu
             for property_name in MUSIC_EVENT_PROPERTIES:
                 network_input[property_name].append(encoded_input_sequence)
                 output_value = str(next_event[property_name])
@@ -109,9 +103,9 @@ def prepare_composer(parsed_folder, output_folder, sequence_length=16):
     vocabs = create_vocabularies(compositions)
     train_compositions, validation_compositions, test_compositions = split_compositions(compositions)
 
-    X_train, y_train = prepare_sequences(train_compositions, vocab, sequence_length)
-    X_validation, y_validation = prepare_sequences(validation_compositions, vocab, sequence_length)
-    X_test, y_test = prepare_sequences(test_compositions, vocab, sequence_length)
+    X_train, y_train = prepare_sequences(train_compositions, vocabs, sequence_length)
+    X_validation, y_validation = prepare_sequences(validation_compositions, vocabs, sequence_length)
+    X_test, y_test = prepare_sequences(test_compositions, vocabs, sequence_length)
 
     os.makedirs(output_folder, exist_ok=True)
     save_prepared_data(output_folder, "train", X_train, y_train)
