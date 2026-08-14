@@ -3,88 +3,127 @@ import json
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-def load_notes(parsed_folder):
+MUSIC_EVENT_PROPERTIES = [
+    "type",
+    "pitch",
+    "duration",
+    "time_shift",
+    "tempo"
+]
+
+def load_compositions(parsed_folder):
     pieces = []
     files = sorted(f for f in os.listdir(parsed_folder) if f.endswith('.json'))
 
     for file_name in files:
         path = os.path.join(parsed_folder, file_name)
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding="utf-8") as f:
             notes = json.load(f)
             pieces.append(notes)
 
     return pieces
 
-def split_pieces(pieces, test_size=0.1, validation_size=0.1, random_state=42):
+def split_compositions(pieces, test_size=0.1, validation_size=0.1, random_state=42):
     train_val_pieces, test_pieces = train_test_split(pieces, test_size=test_size, random_state=random_state)
     validation_ratio = validation_size / (1 - test_size)
     train_pieces, validation_pieces = train_test_split(train_val_pieces, test_size=validation_ratio, random_state=random_state)
 
     return train_pieces, validation_pieces, test_pieces
 
-def create_vocabulary(pieces):
-    all_notes = []
+def create_vocabularies(pieces):
 
-    for piece in pieces:
-        all_notes.extend(piece)
+    unique_events_values = { property_name: set() for property_name in MUSIC_EVENT_PROPERTIES}
 
-    unique_notes = sorted(set(all_notes))
+    for composition in pieces:
+        for music_event in composition:
+            for property_name in MUSIC_EVENT_PROPERTIES:
+                unique_events_values[property_name].add(str(music_event[property_name]))
 
-    return{
-        note: number
-        for number, note in enumerate(unique_notes)
-    }
+    vocabularies = {}
 
-def prepare_sequences(pieces, note_to_int, sequence_length=16):
-    network_input = []
-    network_output = []
+    for property_name in MUSIC_EVENT_PROPERTIES:
+        sorted_values = sorted(unique_events_values[property_name])
 
-    for piece in pieces:
-        for i in range(len(piece) - sequence_length):
-            sequence_in = piece[i: i + sequence_length]
-            sequence_out = piece[i + sequence_length]
+        vocabularies[property_name] = {value: number for number, value in enumerate(sorted_values)}
 
-            if any(note not in note_to_int for note in sequence_in):
+    return vocabularies
+
+def prepare_sequences(pieces, vocabularies, sequence_length=16):
+    network_input = {property_name: [] for property_name in MUSIC_EVENT_PROPERTIES}
+    network_output = {property_name: [] for property_name in MUSIC_EVENT_PROPERTIES}
+
+    for composition in pieces:
+        if len(composition) <= sequence_lenght:
+            continue
+
+        for position in range(len(composition) - sequence_length):
+            input_events = composition[position: position + sequence_length]
+            next_event = composition[position + sequence_length]
+
+            sequence_is_valid = True
+            encoded_input_sequence = {}
+
+            for property_name in MUSIC_EVENT_PROPERTIES:
+                property_vocabulary = vocabularies[property_name]
+
+                input_values = [str(music_event[property_name] for music_event in input_events)]
+                output_value = str(next_event[property_name])
+
+                if any(value not in property_vocabulary for value in input_values):
+                    sequence_is_valid = False
+                    break
+
+                if output_value not in property_vocabulary:
+                    sequence_is_valid = False
+                    break
+
+                encoded_input_sequence[property_name] = [property_vocabulary[value] for value in input_values]
+
+            if not sequence_is_valid:
                 continue
 
-            if sequence_out not in note_to_int:
-                continue
+            # ovde se dodaje u sekvencu
+            for property_name in MUSIC_EVENT_PROPERTIES:
+                network_input[property_name].append(encoded_input_sequence)
+                output_value = str(next_event[property_name])
+                network_output[property_name].append(vocabularies[property_name][output_value])
 
-            network_input.append([note_to_int[n] for n in sequence_in])
-            network_output.append(note_to_int[sequence_out])
 
-    
+    for property_name in MUSIC_EVENT_PROPERTIES:
+        network_input[property_name] = np.array(network_input[property_name], dtype=np.int32)
+        network_output[property_name] = np.array(network_output[property_name], dtype=np.int32)
+
     print(f"Number of sequences: {len(network_input)}")
+    return network_input, network_output
 
-    return np.array(network_input), np.array(network_output)
+def save_prepared_data(output_folder, dataset_name, network_inputs, network_outputs):
+    for property_name in MUSIC_EVENT_PROPERTIES:
+        input_file_name = f"X_{property_name}_{dataset_name}.npy"
+        output_file_name = f"y_{property_name}_{dataset_name}.npy"
+
+        np.save(os.path.join(output_folder, input_file_name), network_inputs[property_name])
+        np.save(os.path.join(output_folder, output_file_name), network_outputs[property_name])
 
 def prepare_composer(parsed_folder, output_folder, sequence_length=16):
-    pieces = load_notes(parsed_folder)
-    vocab = create_vocabulary(pieces)
-    train_pieces, validation_pieces, test_pieces = split_pieces(pieces)
+    compositions = load_compositions(parsed_folder)
+    vocabs = create_vocabularies(compositions)
+    train_compositions, validation_compositions, test_compositions = split_compositions(compositions)
 
-    X_train, y_train = prepare_sequences(train_pieces, vocab, sequence_length)
-    X_validation, y_validation = prepare_sequences(validation_pieces, vocab, sequence_length)
-    X_test, y_test = prepare_sequences(test_pieces, vocab, sequence_length)
+    X_train, y_train = prepare_sequences(train_compositions, vocab, sequence_length)
+    X_validation, y_validation = prepare_sequences(validation_compositions, vocab, sequence_length)
+    X_test, y_test = prepare_sequences(test_compositions, vocab, sequence_length)
 
     os.makedirs(output_folder, exist_ok=True)
+    save_prepared_data(output_folder, "train", X_train, y_train)
+    save_prepared_data(output_folder, "validation", X_validation, y_validation)
+    save_prepared_data(output_folder, "test", X_test, y_test)
 
-    np.save(os.path.join(output_folder, 'X_train.npy'), X_train)
-    np.save(os.path.join(output_folder, 'y_train.npy'), y_train)
+    with open(os.path.join(output_folder, 'vocabularies.json'), 'w') as f:
+        json.dump(vocabs, f)
 
-    np.save(os.path.join(output_folder, 'X_validation.npy'), X_validation)
-    np.save(os.path.join(output_folder, 'y_validation.npy'), y_validation)
-
-    np.save(os.path.join(output_folder, 'X_test.npy'), X_test)
-    np.save(os.path.join(output_folder, 'y_test.npy'), y_test)
-
-    with open(os.path.join(output_folder, 'vocab.json'), 'w') as f:
-        json.dump(vocab, f)
-
-    print(f"Train compositions: {len(train_pieces)}")
-    print(f"Validation compositions: {len(validation_pieces)}")
-    print(f"Test compositions: {len(test_pieces)}")
-
+    print(f"Train compositions: {len(train_compositions)}")
+    print(f"Validation compositions: {len(validation_compositions)}")
+    print(f"Test compositions: {len(test_compositions)}")
     print(f"Train sequences: {len(X_train)}")
     print(f"Validation sequences: {len(X_validation)}")
     print(f"Test sequences: {len(X_test)}")
