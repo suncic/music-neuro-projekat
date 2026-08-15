@@ -27,6 +27,6 @@ def download_composer(composer_name, folder, limit=20):
     print(f"Done: {composer_name}")
     print()
 
-download_composer('bach', '../data/bach')
-download_composer('mozart', '../data/mozart')
-download_composer('beethoven', '../data/beethoven')
+download_composer('bach', 'data/bach')
+download_composer('mozart', 'data/mozart')
+download_composer('beethoven', 'data/beethoven')

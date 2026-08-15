@@ -114,8 +114,8 @@ def parse_composer(midi_folder, parsed_folder, composer_name):
 
     print(f"Done: {composer_name}")
 
-parse_composer('../data/bach', '../data/parsed/bach', 'Bach')
-parse_composer('../data/mozart', '../data/parsed/mozart', 'Mozart')
-parse_composer('../data/beethoven', '../data/parsed/beethoven', 'Beethoven')
+parse_composer('data/bach', 'data/parsed/bach', 'Bach')
+parse_composer('data/mozart', 'data/parsed/mozart', 'Mozart')
+parse_composer('data/beethoven', 'data/parsed/beethoven', 'Beethoven')
 
 print("Parsing complete")

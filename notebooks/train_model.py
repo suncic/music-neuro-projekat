@@ -157,6 +157,6 @@ if __name__ == "main":
         for sequence_length in sequences_length:
 
             train_and_evaluate(
-                composer_folder=f"../data/prepared/{composer}/seq_{sequence_length}",
-                model_save_path=f"../models/{composer}_seq_{sequence_length}.keras"
+                composer_folder=f"data/prepared/{composer}/seq_{sequence_length}",
+                model_save_path=f"models/{composer}_seq_{sequence_length}.keras"
             )

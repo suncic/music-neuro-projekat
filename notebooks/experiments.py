@@ -7,8 +7,8 @@ if __name__ == "__main__":
     if number == 0:
         run_experiment(
             experiment_name="baseline_seed42",
-            composer_folder="../data/prepared/bach/seq_16",
-            results_folder="../results/bach/baseline",
+            composer_folder="data/prepared/bach/seq_16",
+            results_folder="results/bach/baseline",
             embedding_dim=64,
             recurrent_type="lstm",
             lstm_units=128,
@@ -26,8 +26,8 @@ if __name__ == "__main__":
         for learning_rate in learning_rates:
             run_experiment(
                 experiment_name=f"lr_{learning_rate}_seed42",
-                composer_folder="../data/prepared/bach/seq_16",
-                results_folder="../results/bach/learning_rate",
+                composer_folder="data/prepared/bach/seq_16",
+                results_folder="results/bach/learning_rate",
                 learning_rate=learning_rate,
                 batch_size=32,
                 lstm_units=128,
@@ -43,8 +43,8 @@ if __name__ == "__main__":
         for batch_size in batch_sizes:
             run_experiment(
                 experiment_name=f"batch_{batch_size}_seed42",
-                composer_folder="../data/prepared/bach/seq_16",
-                results_folder="../results/bach/batch_size",
+                composer_folder="data/prepared/bach/seq_16",
+                results_folder="results/bach/batch_size",
                 learning_rate=0.001,
                 batch_size=batch_size,
                 lstm_units=128,
@@ -60,8 +60,8 @@ if __name__ == "__main__":
         for units in units_values:
             run_experiment(
                 experiment_name=f"lstm_units_{units}_seed42",
-                composer_folder="../data/prepared/bach/seq_16",
-                results_folder="../results/bach/lstm_units",
+                composer_folder="data/prepared/bach/seq_16",
+                results_folder="results/bach/lstm_units",
                 learning_rate=0.001,
                 batch_size=32,
                 lstm_units=units,
@@ -77,8 +77,8 @@ if __name__ == "__main__":
         for sequence_length in sequence_lengths:
             run_experiment(
                 experiment_name=f"sequence_{sequence_length}_seed42",
-                composer_folder=f"../data/prepared/bach/seq_{sequence_length}",
-                results_folder="../results/bach/sequence_length",
+                composer_folder=f"data/prepared/bach/seq_{sequence_length}",
+                results_folder="results/bach/sequence_length",
                 learning_rate=0.001,
                 batch_size=32,
                 lstm_units=128,
@@ -119,8 +119,8 @@ if __name__ == "__main__":
         for architecture in architectures:
             run_experiment(
                 experiment_name=f"{architecture['name']}_seed42",
-                composer_folder="../data/prepared/bach/seq_16",
-                results_folder="../results/bach/architecture",
+                composer_folder="data/prepared/bach/seq_16",
+                results_folder="results/bach/architecture",
                 recurrent_type=architecture["recurrent_type"],
                 lstm_units=architecture["lstm_units"],
                 second_layer_units=architecture["second_layer_units"],
@@ -136,8 +136,8 @@ if __name__ == "__main__":
         # bez ranog zaustavljanja
         run_experiment(
             experiment_name="without_early_stopping_seed42",
-            composer_folder="../data/prepared/bach/seq_16",
-            results_folder="../results/bach/early_stopping",
+            composer_folder="data/prepared/bach/seq_16",
+            results_folder="results/bach/early_stopping",
             learning_rate=0.001,
             batch_size=32,
             lstm_units=128,
@@ -150,8 +150,8 @@ if __name__ == "__main__":
         # sa ranim zaustavljanjem
         run_experiment(
             experiment_name="with_early_stopping_seed42",
-            composer_folder="../data/prepared/bach/seq_16",
-            results_folder="../results/bach/early_stopping",
+            composer_folder="data/prepared/bach/seq_16",
+            results_folder="results/bach/early_stopping",
             learning_rate=0.001,
             batch_size=32,
             lstm_units=128,
@@ -163,4 +163,4 @@ if __name__ == "__main__":
         )
 
     else:
-        print("Invalid experiment number. Cjoose a number from 0 to 6.")
+        print("Invalid experiment number. Choose a number from 0 to 6.")

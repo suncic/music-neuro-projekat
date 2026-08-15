@@ -132,7 +132,7 @@ for composer in composers:
     for sequence_lenght in sequences_length:
         print(f"Sequence lenght: {sequence_lenght}")
         prepare_composer(
-            parsed_folder=f"../data/parsed/{composer}", 
-            output_folder=f"../data/prepared/{composer}/seq_{sequence_lenght}", 
+            parsed_folder=f"data/parsed/{composer}", 
+            output_folder=f"data/prepared/{composer}/seq_{sequence_lenght}", 
             sequence_length=sequence_lenght
         )
