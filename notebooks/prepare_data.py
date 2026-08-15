@@ -50,7 +50,7 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
     network_output = {property_name: [] for property_name in MUSIC_EVENT_PROPERTIES}
 
     for composition in pieces:
-        if len(composition) <= sequence_lenght:
+        if len(composition) <= sequence_length:
             continue
 
         for position in range(len(composition) - sequence_length):
