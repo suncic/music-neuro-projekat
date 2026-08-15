@@ -64,7 +64,7 @@ def run_experiment(experiment_name, composer_folder, results_folder, optimizer="
         "train_sequences": int(number_of_train_sequence),
         "validation_sequences": int(number_of_validation_sequence),
         "test_sequences": int(number_of_test_sequence),
-        "vocabuary_sizes": vocabulary_sizes,
+        "vocabulary_sizes": vocabulary_sizes,
         "embedding_dim": embedding_dim,
         "recurrent_type": recurrent_type,
         "lstm_units": lstm_units,

@@ -61,7 +61,7 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
 
             for property_name in MUSIC_EVENT_PROPERTIES:
                 property_vocabulary = vocabularies[property_name]
-                input_values = [str(music_event[property_name] for music_event in input_events)]
+                input_values = [str(music_event[property_name]) for music_event in input_events]
                 output_value = str(next_event[property_name])
 
                 if any(value not in property_vocabulary for value in input_values):
@@ -78,7 +78,7 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
                 continue
 
             for property_name in MUSIC_EVENT_PROPERTIES:
-                network_input[property_name].append(encoded_input_sequence)
+                network_input[property_name].append(encoded_input_sequence[property_name])
                 output_value = str(next_event[property_name])
                 network_output[property_name].append(vocabularies[property_name][output_value])
 
@@ -87,7 +87,9 @@ def prepare_sequences(pieces, vocabularies, sequence_length=16):
         network_input[property_name] = np.array(network_input[property_name], dtype=np.int32)
         network_output[property_name] = np.array(network_output[property_name], dtype=np.int32)
 
-    print(f"Number of sequences: {len(network_input)}")
+    for property_name in MUSIC_EVENT_PROPERTIES:
+        print(property_name, network_input[property_name].shape, network_output[property_name].shape)
+
     return network_input, network_output
 
 def save_prepared_data(output_folder, dataset_name, network_inputs, network_outputs):
@@ -122,17 +124,17 @@ def prepare_composer(parsed_folder, output_folder, sequence_length=16):
     print(f"Validation sequences: {len(X_validation)}")
     print(f"Test sequences: {len(X_test)}")
 
+if __name__ == "__main__":
+    sequences_length = [4, 8, 16, 32]
+    composers = ["bach", "mozart", "beethoven"]
 
-sequences_length = [4, 8, 16, 32]
-composers = ["bach", "mozart", "beethoven"]
+    for composer in composers:
+        print(f"===== {composer.capitalize()} =====")
 
-for composer in composers:
-    print(f"===== {composer.capitalize()} =====")
-
-    for sequence_lenght in sequences_length:
-        print(f"Sequence lenght: {sequence_lenght}")
-        prepare_composer(
-            parsed_folder=f"data/parsed/{composer}", 
-            output_folder=f"data/prepared/{composer}/seq_{sequence_lenght}", 
-            sequence_length=sequence_lenght
-        )
+        for sequence_lenght in sequences_length:
+            print(f"Sequence lenght: {sequence_lenght}")
+            prepare_composer(
+                parsed_folder=f"data/parsed/{composer}", 
+                output_folder=f"data/prepared/{composer}/seq_{sequence_lenght}", 
+                sequence_length=sequence_lenght
+            )
