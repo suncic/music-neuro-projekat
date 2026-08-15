@@ -15,12 +15,14 @@ def round_tempo(bpm):
 
 def get_tempo_changes(flat_midi):
     beat_tempo_pairs = []
+    tempo_marks = flat_midi.getElementsByClass(tempo.MetronomeMark)
 
-    for tempo_mark in flat_midi.getElementByClass(tempo.MetronomeMark):
+    for tempo_mark in tempo_marks:
         bpm = tempo_mark.getQuarterBPM()
-
         if bpm is None:
-            beat_tempo_pairs.append((float(tempo_mark.offset), round_tempo(float(bpm))))
+            continue
+        
+        beat_tempo_pairs.append((float(tempo_mark.offset), round_tempo(float(bpm))))
 
     if not beat_tempo_pairs or beat_tempo_pairs[0][0] > 0:
         beat_tempo_pairs.insert(0, (0.0, DEFAULT_TEMPO))
@@ -31,7 +33,7 @@ def find_tempo_at_music_event_start(music_event_start, tempo_changes):
     tempo_at_event_start = DEFAULT_TEMPO
 
     for tempo_changes_start, new_tempo in tempo_changes:
-        if tempo_at_event_start > music_event_start:
+        if tempo_changes_start > music_event_start:
             break
 
         tempo_at_event_start = new_tempo
@@ -101,21 +103,22 @@ def parse_composer(midi_folder, parsed_folder, composer_name):
             print(f"Skipped (already exists): {json_name}")
             continue
 
-        notes = parse_midi_file(midi_path)
+        music_events = parse_midi_file(midi_path)
 
-        if len(notes) == 0:
-            print(f"Skipped (no notes): {file_name}")
+        if len(music_events) == 0:
+            print(f"Skipped (no music events): {file_name}")
             continue
 
         with open(json_path, 'w') as f:
-            json.dump(notes, f)
+            json.dump(music_events, f)
 
-        print(f"Saved: {json_name} {len(notes)} notes")
+        print(f"Saved: {json_name} {len(music_events)} music events")
 
     print(f"Done: {composer_name}")
 
-parse_composer('data/bach', 'data/parsed/bach', 'Bach')
-parse_composer('data/mozart', 'data/parsed/mozart', 'Mozart')
-parse_composer('data/beethoven', 'data/parsed/beethoven', 'Beethoven')
+if __name__ == "__main__":
+    parse_composer('data/bach', 'data/parsed/bach', 'Bach')
+    parse_composer('data/mozart', 'data/parsed/mozart', 'Mozart')
+    parse_composer('data/beethoven', 'data/parsed/beethoven', 'Beethoven')
 
-print("Parsing complete")
+    print("Parsing complete")
