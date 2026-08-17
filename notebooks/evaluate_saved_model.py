@@ -5,8 +5,8 @@ import tensorflow as tf
 from train_model import load_prepared_data, prepare_inputs_for_model, prepare_outputs_for_model
 
 composer_folder = "data/prepared/bach/seq_16"
-model_path = "result/bach/baseline/baseline_seed42/best_epoch_model.keras"
-summary_path = "result/bach/baseline/baseline_seed42/experiment_summary.json"
+model_path = "results/bach/baseline/baseline_seed42/best_epoch_model.keras"
+summary_path = "results/bach/baseline/baseline_seed42/experiment_summary.json"
 
 inputs, outputs, vocabs = load_prepared_data(composer_folder)
 X_test = prepare_inputs_for_model(inputs["test"])

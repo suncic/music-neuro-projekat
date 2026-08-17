@@ -33,7 +33,6 @@ if __name__ == "__main__":
                 lstm_units=128,
                 epochs=100,
                 patience=10,
-                evaluate_test=False,
                 seed=42
             )
 
