@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 composer_folder="data/prepared/bach/seq_16",
                 results_folder="results/bach/lstm_units",
                 learning_rate=0.001,
-                batch_size=32,
+                batch_size=64,
                 lstm_units=units,
                 epochs=100,
                 patience=10,

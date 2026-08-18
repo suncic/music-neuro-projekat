@@ -5,8 +5,15 @@ import tensorflow as tf
 from train_model import load_prepared_data, prepare_inputs_for_model, prepare_outputs_for_model
 
 composer_folder = "data/prepared/bach/seq_16"
-model_path = "results/bach/baseline/baseline_seed42/best_epoch_model.keras"
-summary_path = "results/bach/baseline/baseline_seed42/experiment_summary.json"
+
+# EKSPERIMENT 1
+#model_path = "results/bach/baseline/baseline_seed42/best_epoch_model.keras"
+#summary_path = "results/bach/baseline/baseline_seed42/experiment_summary.json"
+
+# EKSPERIMENT 2
+experiment_folder = "results/bach/learning_rate/lr_0.001_seed42"
+model_path = f"{experiment_folder}/best_epoch_model.keras"
+summary_path = f"{experiment_folder}/experiment_summary.json"
 
 inputs, outputs, vocabs = load_prepared_data(composer_folder)
 X_test = prepare_inputs_for_model(inputs["test"])
