@@ -79,7 +79,7 @@ if __name__ == "__main__":
                 composer_folder=f"data/prepared/bach/seq_{sequence_length}",
                 results_folder="results/bach/sequence_length",
                 learning_rate=0.001,
-                batch_size=32,
+                batch_size=64,
                 lstm_units=128,
                 epochs=100,
                 patience=10,

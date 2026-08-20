@@ -1,0 +1,26 @@
+{
+    "experiment_name": "sequence_32_seed42",
+    "composer_folder": "data/prepared/bach/seq_32",
+    "sequence_length": 32,
+    "train_sequences": 3931,
+    "validation_sequences": 621,
+    "test_sequences": 739,
+    "vocabulary_sizes": {
+        "type": 3,
+        "pitch": 47,
+        "duration": 7,
+        "time_shift": 9,
+        "tempo": 5
+    },
+    "embedding_dim": 64,
+    "recurrent_type": "lstm",
+    "lstm_units": 128,
+    "second_layer_units": null,
+    "learning_rate": 0.001,
+    "batch_size": 64,
+    "maximum_epochs": 100,
+    "patience": 10,
+    "use_early_stopping": true,
+    "evaluate_test": false,
+    "seed": 42
+}
