@@ -90,19 +90,13 @@ if __name__ == "__main__":
     elif number == 5:
         architectures = [
             {
-                "name": "lstm_64",
-                "recurrent_type": "lstm",
-                "lstm_units": 64,
-                "second_layer_units": None
-            },
-            {
                 "name": "lstm_128",
                 "recurrent_type": "lstm",
                 "lstm_units": 128,
                 "second_layer_units": None
             },
             {
-                "name": "deep_lstm_128_64",
+                "name": "lstm_128_64",
                 "recurrent_type": "lstm",
                 "lstm_units": 128,
                 "second_layer_units": 64
@@ -112,6 +106,12 @@ if __name__ == "__main__":
                 "recurrent_type": "gru",
                 "lstm_units": 128,
                 "second_layer_units": None
+            },
+            {
+                "name": "gru_128_64",
+                "recurrent_type": "gru",
+                "lstm_units": 128,
+                "second_layer_units": 64
             }
         ]
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 lstm_units=architecture["lstm_units"],
                 second_layer_units=architecture["second_layer_units"],
                 learning_rate=0.001,
-                batch_size=32,
+                batch_size=64,
                 epochs=100,
                 patience=10,
                 evaluate_test=False,
@@ -138,7 +138,7 @@ if __name__ == "__main__":
             composer_folder="data/prepared/bach/seq_16",
             results_folder="results/bach/early_stopping",
             learning_rate=0.001,
-            batch_size=32,
+            batch_size=64,
             lstm_units=128,
             epochs=100,
             use_early_stopping=False,
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             composer_folder="data/prepared/bach/seq_16",
             results_folder="results/bach/early_stopping",
             learning_rate=0.001,
-            batch_size=32,
+            batch_size=64,
             lstm_units=128,
             epochs=100,
             patience=10,
