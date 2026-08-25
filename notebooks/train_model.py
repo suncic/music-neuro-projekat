@@ -166,7 +166,7 @@ def train_and_evaluate(experiment_name, composer_folder, results_folder, lstm_un
         vocabularies=vocabs, 
         recurrent_type=recurrent_type, 
         second_layer_units=second_layer_units, 
-        lstm_units=lstm_units, 
+        recurrent_units=lstm_units, 
         optimizer=optimizer, 
         learning_rate=learning_rate,
         embedding_dim=embedding_dim
