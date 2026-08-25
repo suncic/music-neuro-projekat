@@ -29,7 +29,7 @@ if __name__ == "__main__":
             )
         
         elif number == 1:
-            learning_rates = [0.01, 0.001, 0.0001] # 0.1
+            learning_rates = [0.01, 0.001, 0.0001]
 
             for learning_rate in learning_rates:
                 train_and_evaluate(
