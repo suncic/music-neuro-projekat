@@ -1,12 +1,11 @@
-from run_experiment import run_experiment
+from train_model import train_and_evaluate
 
 if __name__ == "__main__":
-    number = int(input("Choose experiment to run (0 - 6): "))
+    number = int(input("Izaberite eksperiment (0 - 6): "))
 
-    # bazni eksperiment
     if number == 0:
-        run_experiment(
-            experiment_name="baseline_seed42",
+        train_and_evaluate(
+            experiment_name="baseline",
             composer_folder="data/prepared/bach/seq_16",
             results_folder="results/bach/baseline",
             embedding_dim=64,
@@ -24,8 +23,8 @@ if __name__ == "__main__":
         learning_rates = [0.01, 0.001, 0.0001] # 0.1
 
         for learning_rate in learning_rates:
-            run_experiment(
-                experiment_name=f"lr_{learning_rate}_seed42",
+            train_and_evaluate(
+                experiment_name=f"lr_{learning_rate}",
                 composer_folder="data/prepared/bach/seq_16",
                 results_folder="results/bach/learning_rate",
                 learning_rate=learning_rate,
@@ -40,8 +39,8 @@ if __name__ == "__main__":
         batch_sizes = [16, 32, 64, 128]
 
         for batch_size in batch_sizes:
-            run_experiment(
-                experiment_name=f"batch_{batch_size}_seed42",
+            train_and_evaluate(
+                experiment_name=f"batch_{batch_size}",
                 composer_folder="data/prepared/bach/seq_16",
                 results_folder="results/bach/batch_size",
                 learning_rate=0.001,
@@ -49,7 +48,6 @@ if __name__ == "__main__":
                 lstm_units=128,
                 epochs=100,
                 patience=10,
-                evaluate_test=False,
                 seed=42
             )
 
@@ -57,8 +55,8 @@ if __name__ == "__main__":
         units_values = [64, 128, 256]
 
         for units in units_values:
-            run_experiment(
-                experiment_name=f"lstm_units_{units}_seed42",
+            train_and_evaluate(
+                experiment_name=f"lstm_units_{units}",
                 composer_folder="data/prepared/bach/seq_16",
                 results_folder="results/bach/lstm_units",
                 learning_rate=0.001,
@@ -66,7 +64,6 @@ if __name__ == "__main__":
                 lstm_units=units,
                 epochs=100,
                 patience=10,
-                evaluate_test=False,
                 seed=42
             )
 
@@ -74,8 +71,8 @@ if __name__ == "__main__":
         sequence_lengths = [4, 8, 16, 32]
 
         for sequence_length in sequence_lengths:
-            run_experiment(
-                experiment_name=f"sequence_{sequence_length}_seed42",
+            train_and_evaluate(
+                experiment_name=f"sequence_{sequence_length}",
                 composer_folder=f"data/prepared/bach/seq_{sequence_length}",
                 results_folder="results/bach/sequence_length",
                 learning_rate=0.001,
@@ -83,7 +80,6 @@ if __name__ == "__main__":
                 lstm_units=128,
                 epochs=100,
                 patience=10,
-                evaluate_test=False,
                 seed=42
             )
 
@@ -116,8 +112,8 @@ if __name__ == "__main__":
         ]
 
         for architecture in architectures:
-            run_experiment(
-                experiment_name=f"{architecture['name']}_seed42",
+            train_and_evaluate(
+                experiment_name=f"{architecture['name']}",
                 composer_folder="data/prepared/bach/seq_16",
                 results_folder="results/bach/architecture",
                 recurrent_type=architecture["recurrent_type"],
@@ -127,14 +123,13 @@ if __name__ == "__main__":
                 batch_size=64,
                 epochs=100,
                 patience=10,
-                evaluate_test=False,
                 seed=42
             )
 
     elif number == 6:
         # bez ranog zaustavljanja
-        run_experiment(
-            experiment_name="without_early_stopping_seed42",
+        train_and_evaluate(
+            experiment_name="without_early_stopping",
             composer_folder="data/prepared/bach/seq_16",
             results_folder="results/bach/early_stopping",
             learning_rate=0.001,
@@ -142,13 +137,12 @@ if __name__ == "__main__":
             lstm_units=128,
             epochs=100,
             use_early_stopping=False,
-            evaluate_test=False,
             seed=42
         )
 
         # sa ranim zaustavljanjem
-        run_experiment(
-            experiment_name="with_early_stopping_seed42",
+        train_and_evaluate(
+            experiment_name="with_early_stopping",
             composer_folder="data/prepared/bach/seq_16",
             results_folder="results/bach/early_stopping",
             learning_rate=0.001,
@@ -157,9 +151,8 @@ if __name__ == "__main__":
             epochs=100,
             patience=10,
             use_early_stopping=True,
-            evaluate_test=False,
             seed=42
         )
 
     else:
-        print("Invalid experiment number. Choose a number from 0 to 6.")
+        print("Nepoznat broj. Izabrati broj od 0 do 6.")
