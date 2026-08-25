@@ -31,7 +31,7 @@ def load_prepared_data(folder):
     return inputs, outputs, vocabs
     
 
-def build_model(vocabularies, embedding_dim=64, recurrent_type="lstm", lstm_units=128, 
+def build_model(vocabularies, embedding_dim=64, recurrent_type="lstm", recurrent_units=128, 
                 optimizer="adam", second_layer_units=None, learning_rate=0.001):
     
     network_inputs = {}
@@ -43,28 +43,26 @@ def build_model(vocabularies, embedding_dim=64, recurrent_type="lstm", lstm_unit
     for property_name in MUSIC_EVENT_PROPERTIES:
         vocabulary_size = len(vocabularies[property_name])
         property_input = Input(shape=(None,), name=f"{property_name}_input", dtype="int32")
-        property_embedding_layer = Embedding(input_dim=vocabulary_size, output_dim=embedding_dim, name=f"{property_name}_embedding")
-        property_embedding = property_embedding_layer(property_input)
+        property_embedding = Embedding(input_dim=vocabulary_size, output_dim=embedding_dim, name=f"{property_name}_embedding")(property_input)
         network_inputs[f"{property_name}_input"] = property_input
         embedded_inputs.append(property_embedding)
 
-    concatenate_layer = Concatenate(axis=-1, name="combined_embedding")
-    combined_embeddings = concatenate_layer(embedded_inputs)
+    combined_embeddings = Concatenate(axis=-1, name="combined_embedding")(embedded_inputs)
 
     if recurrent_type == "lstm":
         if second_layer_units is None:
-            recurrent_output = LSTM(lstm_units, name="lstm")(combined_embeddings)
+            recurrent_output = LSTM(recurrent_units, name="lstm")(combined_embeddings)
         else:
-            first_lstm_output = LSTM(lstm_units, return_sequences=True, name="first_lstm")(combined_embeddings)
+            first_lstm_output = LSTM(recurrent_units, return_sequences=True, name="first_lstm")(combined_embeddings)
             recurrent_output = LSTM(second_layer_units, name="second_lstm")(first_lstm_output)
     elif recurrent_type == "gru":
         if second_layer_units is None:
-            recurrent_output = GRU(lstm_units, name="gru")(combined_embeddings)
+            recurrent_output = GRU(recurrent_units, name="gru")(combined_embeddings)
         else:
-            first_gru_output = GRU(lstm_units, return_sequences=True, name="first_gru")(combined_embeddings)
+            first_gru_output = GRU(recurrent_units, return_sequences=True, name="first_gru")(combined_embeddings)
             recurrent_output = GRU(second_layer_units, name="second_gru")(first_gru_output)
     else:
-        raise ValueError(f"Unknown recurrent type: {recurrent_type}")
+        raise ValueError(f"Nepoznata neuronska rekurentna mreza: {recurrent_type}")
 
     for property_name in MUSIC_EVENT_PROPERTIES:
         vocabulary_size = len(vocabularies[property_name])
@@ -100,7 +98,7 @@ def train_and_evaluate(composer_folder, model_save_path, lstm_units=128,
                         optimizer='adam', learning_rate=0.001, second_layer_units=None,
                         epochs=5, batch_size=32, recurrent_type="lstm"):
     
-    print(f"Loading data from {composer_folder}")
+    print(f"Ucitavanje podataka iz {composer_folder}")
     inputs, outputs, vocabs = load_prepared_data(composer_folder)
 
     X_train = prepare_inputs_for_model(inputs["train"])
@@ -112,7 +110,7 @@ def train_and_evaluate(composer_folder, model_save_path, lstm_units=128,
     X_test = prepare_inputs_for_model(inputs["test"])
     y_test = prepare_outputs_for_model(outputs["test"])
 
-    print(f"\nBuilding model (lstm_units={lstm_units}, optimizer={optimizer}, lr={learning_rate})")
+    print(f"\nGradjenje modela: lstm_units={lstm_units}, optimizer={optimizer}, lr={learning_rate}")
     model = build_model(
         vocabularies=vocabs, 
         recurrent_type=recurrent_type, 
@@ -123,7 +121,7 @@ def train_and_evaluate(composer_folder, model_save_path, lstm_units=128,
     )
     model.summary()
 
-    print(f"\nTraining model ({epochs} epochs, batch_size={batch_size})")
+    print(f"\nPocinje treniranje modela: {epochs} epoha, velicina batch-a {batch_size}")
     training_results = model.fit(
         X_train, 
         y_train, 
@@ -132,8 +130,8 @@ def train_and_evaluate(composer_folder, model_save_path, lstm_units=128,
         validation_data=(X_validation, y_validation)
     )
 
-    print("\nEvaluating model on test set")
-    test_results = model.evaluate(X_test, y_test)
+    print("\nEvaluiranje modela na test skupu")
+    test_results = model.evaluate(X_test, y_test, return_dict=True)
     for metric_name, metric_value in test_results.items():
         print(f"{metric_name}: {metric_value:.4f}")
 
@@ -144,11 +142,11 @@ def train_and_evaluate(composer_folder, model_save_path, lstm_units=128,
             os.makedirs(model_folder, exist_ok=True)
 
         model.save(model_save_path)
-        print(f"Saved to {model_save_path}")
+        print(f"Sacuvano u {model_save_path}")
     
     return training_results, test_results
 
-if __name__ == "main":
+if __name__ == "__main__":
 
     sequences_length = [4, 8, 16, 32]
     composers = ["bach", "mozart", "beethoven"]

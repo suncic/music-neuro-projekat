@@ -17,9 +17,9 @@ def load_compositions(parsed_folder):
 
     for file_name in files:
         path = os.path.join(parsed_folder, file_name)
-        with open(path, 'r', encoding="utf-8") as f:
-            notes = json.load(f)
-            pieces.append(notes)
+        with open(path, 'r') as f:
+            music_events = json.load(f)
+            pieces.append(music_events)
 
     return pieces
 
@@ -30,7 +30,7 @@ def split_compositions(pieces, test_size=0.1, validation_size=0.1, random_state=
     return train_pieces, validation_pieces, test_pieces
 
 def create_vocabularies(pieces):
-    unique_events_values = { property_name: set() for property_name in MUSIC_EVENT_PROPERTIES}
+    unique_events_values = {property_name: set() for property_name in MUSIC_EVENT_PROPERTIES}
 
     for composition in pieces:
         for music_event in composition:
@@ -117,12 +117,12 @@ def prepare_composer(parsed_folder, output_folder, sequence_length=16):
     with open(os.path.join(output_folder, 'vocabularies.json'), 'w') as f:
         json.dump(vocabs, f)
 
-    print(f"Train compositions: {len(train_compositions)}")
-    print(f"Validation compositions: {len(validation_compositions)}")
-    print(f"Test compositions: {len(test_compositions)}")
-    print(f"Train sequences: {len(X_train)}")
-    print(f"Validation sequences: {len(X_validation)}")
-    print(f"Test sequences: {len(X_test)}")
+    print(f"Kompozicije za treniranje: {len(train_compositions)}")
+    print(f"Kompozicije za validaciju: {len(validation_compositions)}")
+    print(f"Kompozicije za testiranje: {len(test_compositions)}")
+    print(f"Sekvence za treniranje: {len(X_train)}")
+    print(f"Sekvence za validaciju: {len(X_validation)}")
+    print(f"Sekvence za testiranje: {len(X_test)}")
 
 if __name__ == "__main__":
     sequences_length = [4, 8, 16, 32]
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         print(f"===== {composer.capitalize()} =====")
 
         for sequence_lenght in sequences_length:
-            print(f"Sequence lenght: {sequence_lenght}")
+            print(f"Duzina sekvence: {sequence_lenght}")
             prepare_composer(
                 parsed_folder=f"data/parsed/{composer}", 
                 output_folder=f"data/prepared/{composer}/seq_{sequence_lenght}", 

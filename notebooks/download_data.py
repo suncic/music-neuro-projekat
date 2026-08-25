@@ -4,27 +4,27 @@ import os
 
 def download_composer(composer_name, folder, limit=20):
     os.makedirs(folder, exist_ok=True)
-    print(f"Downloading {composer_name} compositions...")
+    print(f"Preuzimanje {composer_name} kompozicija")
 
     pieces = corpus.getComposer(composer_name)
-    print(f"Found {len(pieces)} compositions")
+    print(f"Pronadjeno {len(pieces)} kompozicija")
 
-    for i, path in enumerate(pieces[:limit]):
+    for i, composition_pointer in enumerate(pieces[:limit]):
         try:
             file_name = f"{composer_name}_{i+1}.mid"
             full_path = os.path.join(folder, file_name)
 
             if os.path.exists(full_path):
-                print(f"Skipped (already exist): {file_name}")
+                print(f"Preskocena kompozicija posto vec postoji preuzeta: {file_name}")
                 continue
 
-            composition = corpus.parse(path)
+            composition = corpus.parse(composition_pointer)
             composition.write('midi', fp=full_path)
-            print(f"Saved: {file_name}")
+            print(f"Sacuvano {file_name}")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Greska prilikom preuzimanja: {e}")
 
-    print(f"Done: {composer_name}")
+    print(f"Zavrseno preuzimanje kompozicija od {composer_name}")
     print()
 
 download_composer('bach', 'data/bach')

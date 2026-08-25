@@ -14,7 +14,7 @@ def round_tempo(bpm):
     return max(TEMPO_STEP, int(round(bpm / TEMPO_STEP) * TEMPO_STEP))
 
 def get_tempo_changes(flat_midi):
-    beat_tempo_pairs = []
+    tempo_changes = []
     tempo_marks = flat_midi.getElementsByClass(tempo.MetronomeMark)
 
     for tempo_mark in tempo_marks:
@@ -22,23 +22,21 @@ def get_tempo_changes(flat_midi):
         if bpm is None:
             continue
         
-        beat_tempo_pairs.append((float(tempo_mark.offset), round_tempo(float(bpm))))
+        tempo_changes.append((float(tempo_mark.offset), round_tempo(float(bpm))))
 
-    if not beat_tempo_pairs or beat_tempo_pairs[0][0] > 0:
-        beat_tempo_pairs.insert(0, (0.0, DEFAULT_TEMPO))
+    if not tempo_changes or tempo_changes[0][0] > 0:
+        tempo_changes.insert(0, (0.0, DEFAULT_TEMPO))
 
-    return sorted(beat_tempo_pairs, key=lambda pair: pair[0])
+    return sorted(tempo_changes, key=lambda pair: pair[0])
 
 def find_tempo_at_music_event_start(music_event_start, tempo_changes):
-    tempo_at_event_start = DEFAULT_TEMPO
+    tempo_at_current_event_start = DEFAULT_TEMPO
 
-    for tempo_changes_start, new_tempo in tempo_changes:
-        if tempo_changes_start > music_event_start:
-            break
+    for number_of_measure, new_tempo in tempo_changes:
+        if number_of_measure <= music_event_start:
+            tempo_at_current_event_start = new_tempo
 
-        tempo_at_event_start = new_tempo
-
-    return tempo_at_event_start
+    return tempo_at_current_event_start
 
 def parse_midi_file(file_path):
     music_events = []
@@ -83,14 +81,14 @@ def parse_midi_file(file_path):
             previous_start_event_time = current_start_event_time
 
     except Exception as e:
-        print(f"Error in {file_path}: {e}")
+        print(f"Greska u {file_path}: {e}")
 
     return music_events
 
 def parse_composer(midi_folder, parsed_folder, composer_name):
-    print(f"Parsing {composer_name} MIDI files")
+    print(f"Parsiranje {composer_name} MIDI fajlova")
     files = sorted(f for f in os.listdir(midi_folder) if f.endswith('.mid'))
-    print(f"Found {len(files)} files")
+    print(f"Pronadjeno {len(files)} fajlova u folderu preuzedih midi fajlova")
 
     os.makedirs(parsed_folder, exist_ok=True)
 
@@ -100,25 +98,25 @@ def parse_composer(midi_folder, parsed_folder, composer_name):
         json_path = os.path.join(parsed_folder, json_name)
 
         if os.path.exists(json_path):
-            print(f"Skipped (already exists): {json_name}")
+            print(f"Preskocena kompozicija posto vec postoji preuzeta: {json_name}")
             continue
 
         music_events = parse_midi_file(midi_path)
 
         if len(music_events) == 0:
-            print(f"Skipped (no music events): {file_name}")
+            print(f"Ova kompozicija nema muzickih dogadjaja: {file_name}")
             continue
 
         with open(json_path, 'w') as f:
             json.dump(music_events, f)
 
-        print(f"Saved: {json_name} {len(music_events)} music events")
+        print(f"Sacuvano {json_name} {len(music_events)} muzickih dogadjaja")
 
-    print(f"Done: {composer_name}")
+    print(f"Zavrsen kompozitor: {composer_name}")
 
 if __name__ == "__main__":
     parse_composer('data/bach', 'data/parsed/bach', 'Bach')
     parse_composer('data/mozart', 'data/parsed/mozart', 'Mozart')
     parse_composer('data/beethoven', 'data/parsed/beethoven', 'Beethoven')
 
-    print("Parsing complete")
+    print("Parsiranje kompoletno")
