@@ -2,7 +2,7 @@ from train_model import train_and_evaluate
 
 if __name__ == "__main__":
     number = int(input("Izaberite eksperiment (0 - 6): "))
-    composers = ["bach", "mozart", "beethoven"]
+    composers = ["bach", "mozart"]
 
     if number < 0 or number > 6:
         print("Nepoznat broj. Izbrati broj od 0 do 6.")

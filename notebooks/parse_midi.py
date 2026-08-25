@@ -117,6 +117,5 @@ def parse_composer(midi_folder, parsed_folder, composer_name):
 if __name__ == "__main__":
     parse_composer('data/bach', 'data/parsed/bach', 'Bach')
     parse_composer('data/mozart', 'data/parsed/mozart', 'Mozart')
-    parse_composer('data/beethoven', 'data/parsed/beethoven', 'Beethoven')
 
-    print("Parsiranje kompoletno")
+    print("Parsiranje kompletno")

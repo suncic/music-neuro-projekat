@@ -126,7 +126,7 @@ def prepare_composer(parsed_folder, output_folder, sequence_length=16):
 
 if __name__ == "__main__":
     sequences_length = [4, 8, 16, 32]
-    composers = ["bach", "mozart", "beethoven"]
+    composers = ["bach", "mozart"]
 
     for composer in composers:
         print(f"===== {composer.capitalize()} =====")

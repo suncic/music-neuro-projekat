@@ -29,4 +29,3 @@ def download_composer(composer_name, folder, limit=20):
 
 download_composer('bach', 'data/bach')
 download_composer('mozart', 'data/mozart')
-download_composer('beethoven', 'data/beethoven')
