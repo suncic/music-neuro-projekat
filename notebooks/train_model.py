@@ -158,7 +158,7 @@ def train_and_evaluate(experiment_name, composer_folder, results_folder, lstm_un
     }
 
     with open(os.path.join(run_folder, "config.json"), "w") as f:
-        json.dump(experiment_configuration, f)
+        json.dump(experiment_configuration, f, indent=4)
 
 
     print(f"\nGradjenje modela: lstm_units={lstm_units}, optimizer={optimizer}, lr={learning_rate}")
@@ -223,7 +223,7 @@ def train_and_evaluate(experiment_name, composer_folder, results_folder, lstm_un
     experiment_summary["test_results"] = {metric_name: float(metric_value) for metric_name, metric_value in test_results.items()}
 
     with open(os.path.join(run_folder, "experiment_summary.json"), "w") as f:
-        json.dump(experiment_summary, f)
+        json.dump(experiment_summary, f, indent=4)
 
     print(f"Eksperiment je zavrsen. Rezultati su u {run_folder}")
     return experiment_summary
