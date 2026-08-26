@@ -175,6 +175,8 @@ def run_selected_experiment(number, composer):
 
 if __name__ == "__main__":
     print("Eksperimenti:")
+    print("0 - Baseline model")
+    print("1 - Brzina ucenja")
     print("2 - Batch size")
     print("3 - Broj LSTM jedinica")
     print("4 - Dužina sekvence")
