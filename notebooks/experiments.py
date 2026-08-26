@@ -3,17 +3,29 @@ from train_model import train_and_evaluate
 COMPOSER_SETTINGS = {
     "bach": {
         "learning_rate": 0.001,
-        "batch_size": 128
+        "batch_size": 128,
+        "sequence_length": 4,
+        "recurrent_type": "gru",
+        "lstm_units": 128,
+        "second_layer_units": None
     },
     "mozart": {
         "learning_rate": 0.001,
-        "batch_size": 128
+        "batch_size": 128,
+        "sequence_length": 32,
+        "recurrent_type": "gru",
+        "lstm_units": 128,
+        "second_layer_units": 64
     }
 }
 
 def run_selected_experiment(number, composer):
     settings = COMPOSER_SETTINGS[composer]
 
+    recurrent_type = settings["recurrent_type"]
+    second_layer_units = settings["second_layer_units"]
+    sequence_length = settings["sequence_length"]
+    lstm_units = settings["lstm_units"]
     learning_rate = settings["learning_rate"]
     batch_size = settings["batch_size"]
     composer_folder = f"data/prepared/{composer}/seq_16"
@@ -62,7 +74,7 @@ def run_selected_experiment(number, composer):
                 experiment_name=f"batch_{current_batch_size}",
                 composer_folder=composer_folder,
                 results_folder=f"results/{composer}/batch_size",
-                learning_rate=0.001,
+                learning_rate=learning_rate,
                 batch_size=current_batch_size,
                 lstm_units=128,
                 epochs=100,
@@ -73,14 +85,14 @@ def run_selected_experiment(number, composer):
     elif number == 3:
         units_values = [64, 128, 256]
 
-        for units in units_values:
+        for current_units in units_values:
             train_and_evaluate(
-                experiment_name=f"lstm_units_{units}",
+                experiment_name=f"lstm_units_{current_units}",
                 composer_folder=composer_folder,
                 results_folder=f"results/{composer}/lstm_units",
                 learning_rate=learning_rate,
                 batch_size=batch_size,
-                lstm_units=units,
+                lstm_units=current_units,
                 epochs=100,
                 patience=10,
                 seed=42
@@ -89,14 +101,14 @@ def run_selected_experiment(number, composer):
     elif number == 4:
         sequence_lengths = [4, 8, 16, 32]
 
-        for sequence_length in sequence_lengths:
+        for current_sequence_length in sequence_lengths:
             train_and_evaluate(
-                experiment_name=f"sequence_{sequence_length}",
-                composer_folder=f"data/prepared/{composer}/seq_{sequence_length}",
+                experiment_name=f"sequence_{current_sequence_length}",
+                composer_folder=f"data/prepared/{composer}/seq_{current_sequence_length}",
                 results_folder=f"results/{composer}/sequence_length",
                 learning_rate=learning_rate,
                 batch_size=batch_size,
-                lstm_units=128, # posle eksperimenta 3 promeniti ovo
+                lstm_units=lstm_units,
                 epochs=100,
                 patience=10,
                 seed=42
@@ -133,7 +145,7 @@ def run_selected_experiment(number, composer):
         for architecture in architectures:
             train_and_evaluate(
                 experiment_name=f"{architecture['name']}",
-                composer_folder=composer_folder, # u zavisnosti od velicine sekvence ovo se treba promeniti
+                composer_folder=f"data/prepared/{composer}/seq_{sequence_length}",
                 results_folder=f"results/{composer}/architecture",
                 recurrent_type=architecture["recurrent_type"],
                 lstm_units=architecture["lstm_units"],
@@ -149,28 +161,32 @@ def run_selected_experiment(number, composer):
         # bez ranog zaustavljanja
         train_and_evaluate(
             experiment_name="without_early_stopping",
-            composer_folder=composer_folder, # u zavisnosti od velicine sekvence ovo se treba promeniti
+            composer_folder=f"data/prepared/{composer}/seq_{sequence_length}",
             results_folder=f"results/{composer}/early_stopping",
             learning_rate=learning_rate,
             batch_size=batch_size,
-            lstm_units=128, # treba promeniti
+            lstm_units=lstm_units,
             epochs=100,
             use_early_stopping=False,
-            seed=42
+            seed=42,
+            recurrent_type=recurrent_type,
+            second_layer_units=second_layer_units
         )
 
         # sa ranim zaustavljanjem
         train_and_evaluate(
             experiment_name="with_early_stopping",
-            composer_folder=composer_folder, # u zavisnosti od velicine sekvence ovo se treba promeniti
+            composer_folder=f"data/prepared/{composer}/seq_{sequence_length}",
             results_folder=f"results/{composer}/early_stopping",
             learning_rate=learning_rate,
             batch_size=batch_size,
-            lstm_units=128, # treba promeniti
+            lstm_units=lstm_units,
             epochs=100,
             patience=10,
             use_early_stopping=True,
-            seed=42
+            seed=42,
+            recurrent_type=recurrent_type,
+            second_layer_units=second_layer_units
         )
 
 if __name__ == "__main__":
