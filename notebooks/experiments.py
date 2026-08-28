@@ -3,14 +3,14 @@ from train_model import train_and_evaluate
 COMPOSER_SETTINGS = {
     "bach": {
         "learning_rate": 0.001,
-        "batch_size": 128,
+        "batch_size": 64,
         "sequence_length": 4,
         "recurrent_type": "gru",
         "lstm_units": 128,
         "second_layer_units": None
     },
     "mozart": {
-        "learning_rate": 0.001,
+        "learning_rate": 0.0001,
         "batch_size": 128,
         "sequence_length": 32,
         "recurrent_type": "gru",
@@ -207,3 +207,5 @@ if __name__ == "__main__":
     composers = ["bach", "mozart"]
     for composer in composers:
         run_selected_experiment(number, composer)
+
+    #run_selected_experiment(number, "mozart")
