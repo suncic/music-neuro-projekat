@@ -4,7 +4,7 @@ COMPOSER_SETTINGS = {
     "bach": {
         "learning_rate": 0.001,
         "batch_size": 64,
-        "sequence_length": 4,
+        "sequence_length": 16,
         "recurrent_type": "gru",
         "lstm_units": 128,
         "second_layer_units": None
@@ -12,8 +12,8 @@ COMPOSER_SETTINGS = {
     "mozart": {
         "learning_rate": 0.0001,
         "batch_size": 128,
-        "sequence_length": 32,
-        "recurrent_type": "gru",
+        "sequence_length": 16,
+        "recurrent_type": "lstm",
         "lstm_units": 128,
         "second_layer_units": 64
     }
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     print("1 - Brzina ucenja")
     print("2 - Batch size")
     print("3 - Broj LSTM jedinica")
-    print("4 - Dužina sekvence")
+    print("4 - Duzina sekvence")
     print("5 - Arhitektura")
     print("6 - Early stopping i overfitting")
 
