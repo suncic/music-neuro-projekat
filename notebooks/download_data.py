@@ -1,4 +1,3 @@
-import music21
 from music21 import corpus
 import os
 
