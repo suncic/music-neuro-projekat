@@ -74,7 +74,7 @@ def parse_midi_file(file_path):
                     "pitch": pitch,
                     "duration": duration,
                     "time_shift": time_difference,
-                    "tempo": find_tempo_at_music_event_start(current_start_event_time, tempo_changes),
+                    "tempo": find_tempo_at_music_event_start(current_start_event_time, tempo_changes)
                 }
             )
 

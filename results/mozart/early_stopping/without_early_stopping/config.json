@@ -1,0 +1,26 @@
+{
+    "experiment_name": "without_early_stopping",
+    "composer_folder": "data/prepared/mozart/seq_16",
+    "sequence_length": 16,
+    "train_sequences": 31489,
+    "validation_sequences": 3568,
+    "test_sequences": 4679,
+    "vocabulary_sizes": {
+        "type": 3,
+        "pitch": 297,
+        "duration": 8,
+        "time_shift": 9,
+        "tempo": 5
+    },
+    "embedding_dim": 64,
+    "recurrent_type": "lstm",
+    "lstm_units": 128,
+    "second_layer_units": 64,
+    "optimizer": "Adam",
+    "learning_rate": 0.0001,
+    "batch_size": 128,
+    "maximum_epochs": 100,
+    "patience": 10,
+    "use_early_stopping": false,
+    "seed": 42
+}
